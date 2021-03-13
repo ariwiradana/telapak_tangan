@@ -23,8 +23,8 @@ img = cv2.imread('Dataset/Palmprint/img0001_m_r_02.jpg')
 img = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 img = crop(img)
-# img = roi(img)
-# img = resize(img)
+img = roi(img)
+img = resize(img)
 
 
 # img = gabor_filter(img)
