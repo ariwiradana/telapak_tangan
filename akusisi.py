@@ -3,38 +3,32 @@ import numpy as np
 from preprocessing import brightness_contrast
 
 
-def roi(img):
-    height, width = img.shape[:2]
-    start_row, start_col = int(height * .4), int(width * .1)
-    end_row, end_col = int(height * .9), int(width * .7)
-    cropped = img[start_row:end_row, start_col:end_col]
-    return cropped
+def roi(image):
+    img_copy = image.copy()
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+    thresh = cv2.threshold(blurred, 60, 255, cv2.THRESH_BINARY)[1]
 
+    cont, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
-def crop(img):
-    lower_range = np.array([90])
-    higher_range = np.array([255])
+    M = cv2.moments(thresh)
+    cX = int(M["m10"] / M["m00"])
+    cY = int(M["m01"] / M["m00"])
 
-    img_copy = img.copy()
-    img_gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-    img_kontras = brightness_contrast(img_gray)
+    # circle = cv2.circle(img_copy, (cX, cY), 7, (255, 255, 255), -1)
 
-    mask = cv2.inRange(img_kontras, lower_range, higher_range)
+    x = int(cX - (cX * .2))
+    y = int(cY - (cY * .3))
+    w = int(cX + (cX * .6))
+    h = int(cY + (cY * .6))
 
-    cont, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-    kontur = cv2.drawContours(img, cont, -1, 255, 3)
-    c = max(cont, key=cv2.contourArea)
-
-    x, y, w, h = cv2.boundingRect(c)
-    cv2.rectangle(kontur, (x, y), (x + w, y + h), (0, 255, 0), 20)
-
-    cropped = img_copy[y:y + h, x:x + w]
+    cropped = img_copy[y:h, x:w]
 
     return cropped
 
 
 def resize(img):
-    shape = (300, 300)
+    shape = (200, 200)
     resize_img = cv2.resize(img, shape)
     return resize_img
 

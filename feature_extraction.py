@@ -1,20 +1,28 @@
+import os
+
 import cv2
-import numpy as np
 from skimage.feature import greycomatrix, greycoprops
-from akusisi import roi, resize
-from preprocessing import grayscale, sharpen, brightness_contrast, blur
+import numpy as np
+from tqdm import tqdm
+import pandas as pd
 
-filename = "Dataset/Palmprint/img0134_m_r_02.jpg"
+from akusisi import resize, roi
+from preprocessing import grayscale, brightness_contrast, sharpen, blur
+import matplotlib.pyplot as plt
 
-img_ori = cv2.imread(filename)
-rotate = cv2.rotate(img_ori, cv2.ROTATE_90_CLOCKWISE)
-roi = roi(rotate)
-resize = resize(roi)
-
-gray = grayscale(resize)
-sharpen = sharpen(gray)
-kontras = brightness_contrast(sharpen)
-smooth = blur(kontras)
+# filename = "Dataset/Palmprint/img0134_m_r_02.jpg"
+#
+# img_ori = cv2.imread(filename)
+# rotate = cv2.rotate(img_ori, cv2.ROTATE_90_CLOCKWISE)
+# roi = roi(rotate)
+# resize = resize(roi)
+#
+# sharpen = sharpen(resize)
+# kontras = brightness_contrast(sharpen)
+# smooth = blur(kontras)
+# gray = grayscale(smooth)
+#
+# labels = ['test gambar']
 
 
 def calc_glcm_all_agls(img, label, props, dists=[5], agls=[0, np.pi / 4, np.pi / 2, 3 * np.pi / 4], lvl=256, sym=True,
@@ -32,3 +40,4 @@ def calc_glcm_all_agls(img, label, props, dists=[5], agls=[0, np.pi / 4, np.pi /
     feature.append(label)
 
     return feature
+
